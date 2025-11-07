@@ -9,22 +9,20 @@ import matplotlib.pyplot as plt
 from utils import plot_training_history, visualize_random_val_predictions
 
 # --- Hyperparameter ---
-EPOCHS = 16
-BATCH_SIZE = 16
-LEARNING_RATE = 0.0003
-
-#Menampilkan plot riwayat training dan validasi setelah training selesai.
+EPOCHS = 20
+BATCH_SIZE = 15
+LEARNING_RATE = 0.01  # Dikurangi untuk pre-trained model
 
 def train():
     # 1. Memuat Data
     train_loader, val_loader, num_classes, in_channels = get_data_loaders(BATCH_SIZE)
     
-    # 2. Inisialisasi Model
-    model = SimpleCNN(in_channels=in_channels, num_classes=num_classes)
+    # 2. Inisialisasi Model DenseNet-121
+    model = SimpleCNN(in_channels=in_channels, num_classes=num_classes, pretrained=True)
+    print("Model DenseNet-121 berhasil dimuat!")
     print(model)
     
     # 3. Mendefinisikan Loss Function dan Optimizer
-    # Gunakan BCEWithLogitsLoss untuk klasifikasi biner. Ini lebih stabil secara numerik.
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     
@@ -34,7 +32,7 @@ def train():
     train_accs_history = []
     val_accs_history = []
     
-    print("\n--- Memulai Training ---")
+    print("\n--- Memulai Training dengan DenseNet-121 ---")
     
     # 4. Training Loop
     for epoch in range(EPOCHS):
@@ -44,12 +42,10 @@ def train():
         train_total = 0
         
         for images, labels in train_loader:
-            images = images
-            # Ubah tipe data label menjadi float untuk BCEWithLogitsLoss
             labels = labels.float()
             
             outputs = model(images)
-            loss = criterion(outputs, labels) # Loss dihitung antara output tunggal dan label
+            loss = criterion(outputs, labels)
             
             optimizer.zero_grad()
             loss.backward()
@@ -73,7 +69,6 @@ def train():
         
         with torch.no_grad():
             for images, labels in val_loader:
-                images = images
                 labels = labels.float()
                 
                 outputs = model(images)
@@ -97,7 +92,22 @@ def train():
               f"Train Loss: {avg_train_loss:.4f} | Train Acc: {train_accuracy:.2f}% | "
               f"Val Loss: {avg_val_loss:.4f} | Val Acc: {val_accuracy:.2f}%")
 
-    print("--- Training Selesai ---")
+    print("\n--- Training Selesai ---")
+    
+    # Tampilkan akurasi tertinggi
+    max_train_acc = max(train_accs_history)
+    max_val_acc = max(val_accs_history)
+    best_epoch_train = train_accs_history.index(max_train_acc) + 1
+    best_epoch_val = val_accs_history.index(max_val_acc) + 1
+    
+    print(f"\n=== HASIL TRAINING ===")
+    print(f"Akurasi Training Tertinggi: {max_train_acc:.2f}% (Epoch {best_epoch_train})")
+    print(f"Akurasi Validasi Tertinggi: {max_val_acc:.2f}% (Epoch {best_epoch_val})")
+    print(f"======================\n")
+    
+    # Save model
+    torch.save(model.state_dict(), 'densenet121_chest.pth')
+    print("Model disimpan sebagai 'densenet121_chest.pth'\n")
     
     # Tampilkan plot
     plot_training_history(train_losses_history, val_losses_history, 
@@ -108,4 +118,3 @@ def train():
 
 if __name__ == '__main__':
     train()
-    

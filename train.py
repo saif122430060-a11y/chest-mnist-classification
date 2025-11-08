@@ -19,7 +19,7 @@ from utils import plot_training_history, visualize_random_val_predictions
 # Ubah ke 'densenet' untuk menggunakan DenseNet-121
 # Ubah ke 'efficientnet' untuk menggunakan EfficientNet-B0
 # Ubah ke 'mobilenet' untuk menggunakan MobileNet-V3 Large
-MODEL_CHOICE = 'densenet'  # 'densenet', 'efficientnet', atau 'mobilenet'
+MODEL_CHOICE = 'mobilenet'  # 'densenet', 'efficientnet', atau 'mobilenet'
 
 # --- Hyperparameter ---
 EPOCHS = 60

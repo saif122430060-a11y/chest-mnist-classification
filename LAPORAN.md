@@ -769,7 +769,7 @@ Eksperimen **Chest X-ray Classification** berhasil mengimplementasikan sistem kl
 **Dibuat oleh:** Saif Khan Nazirun  
 **NIM:** 122430060  
 **Institusi:** Institut Teknologi Sumatera (ITERA)  
-**Program:** Teknik Informatika  
+**Program:** Teknik Biomedis  
 **Tanggal:** 8 November 2025  
 **Framework:** PyTorch 2.0+  
 **Dataset:** ChestMNIST Binary Classification  
